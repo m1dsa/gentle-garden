@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gentle Garden | 创作大师</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F9F7F2;
+            --primary: #A6A88F;
+            --accent: #D9B5A8;
+            --warm-grey: #B5AEA4;
+            --blue-grey: #8FA1B3;
+            --terra: #C29680;
+            --text-main: #5D5550;
+            --text-sub: #8C8480;
+            --card-bg: #FFFFFF;
+            --shadow: 0 10px 30px -10px rgba(166, 168, 143, 0.2);
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, rgba(212, 194, 174, 0.2) 0%, rgba(181, 174, 164, 0.2) 100%), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23A6A88F' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden; 
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+
+        @keyframes float-in-entry {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal { opacity: 0; animation: float-in-entry 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-800 { animation-delay: 0.8s; }
+        .delay-900 { animation-delay: 0.9s; }
+        
+        header { text-align: center; margin-bottom: 20px; position: relative; }
+
+        h1 {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.8rem;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 15px;
+        }
+        .leaf-deco { width: 24px; height: 24px; fill: var(--primary); }
+
+        .dashboard { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; position: relative; }
+
+        .progress-container { position: relative; width: 150px; height: 150px; margin: 10px auto; }
+        .progress-ring {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, var(--warm-grey) 0%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow);
+            transition: background 0.8s ease-out;
+        }
+        .progress-inner {
+            width: 82%; height: 82%; background-color: var(--bg-color);
+            border-radius: 50%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 2;
+        }
+        .level-label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
+        .level-value { font-family: 'Lora', serif; font-size: 2.5rem; color: var(--primary); line-height: 1; font-weight: 700; }
+        .xp-sub { font-size: 0.7rem; color: var(--text-sub); margin-top: 5px; font-family: 'Nunito'; }
+
+        .points-bubble {
+            position: absolute; top: 0; right: 10%;
+            background-color: var(--accent); color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 15px rgba(217, 181, 168, 0.4);
+            animation: float 6s ease-in-out infinite; z-index: 5;
+        }
+        .points-val { font-weight: 700; font-size: 1.2rem; font-family: 'Lora'; }
+        .points-lbl { font-size: 0.7rem; opacity: 0.9; }
+
+        .vacation-btn {
+            background: transparent; border: 1px solid var(--primary); color: var(--primary);
+            padding: 8px 20px; border-radius: 50px; margin-top: 15px; cursor: pointer;
+            font-family: 'Nunito'; font-weight: 600; transition: all 0.3s;
+        }
+        .vacation-btn:hover { background: var(--primary); color: white; }
+        body.vacation-mode { filter: grayscale(0.8); }
+
+        .quote-container {
+            text-align: center; margin: 30px auto 40px; padding: 20px; max-width: 500px;
+            border-top: 1px solid rgba(166, 168, 143, 0.3); border-bottom: 1px solid rgba(166, 168, 143, 0.3);
+        }
+        .quote-main { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--text-main); font-style: italic; margin-bottom: 5px; }
+        .quote-sub { font-family: 'Nunito', sans-serif; font-size: 0.9rem; color: var(--text-sub); letter-spacing: 0.5px; }
+
+        .section-title {
+            font-family: 'Lora', serif; font-size: 1.1rem; 
+            margin: 30px 0 15px; color: var(--text-main);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title::before { content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 2px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        @media (min-width: 600px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .card {
+            background: var(--card-bg); border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: pointer; transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid transparent;
+            position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary); }
+        .card:active { transform: scale(0.98); }
+
+        .card-icon {
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; margin-bottom: 12px;
+        }
+
+        .card.sage .card-icon { background: rgba(166, 168, 143, 0.2); color: var(--primary); }
+        .card.rose .card-icon { background: rgba(217, 181, 168, 0.2); color: var(--accent); }
+        .card.blue .card-icon { background: rgba(143, 161, 179, 0.2); color: var(--blue-grey); }
+        .card.terra .card-icon { background: rgba(194, 150, 128, 0.2); color: var(--terra); }
+        .card.fail { opacity: 0.8; background: #F5F5F5; }
+        .card.fail .card-icon { background: #ddd; color: #888; }
+
+        .card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; color: var(--text-main); }
+        .card-reward { font-size: 0.8rem; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
+
+        .floater {
+            position: fixed; pointer-events: none; font-weight: bold; font-family: 'Lora';
+            font-size: 1.2rem; animation: floatUp 1.2s ease-out forwards; z-index: 100;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 0; }
+            20% { transform: translateY(-10px); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+
+        .log-container { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.8rem; }
+        .special-text { font-family: 'Quicksand', cursive; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header class="reveal delay-100">
+        <h1>
+            <svg class="leaf-deco" viewBox="0 0 24 24"><path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" /></svg>
+            Gentle Garden
+            <svg class="leaf-deco" viewBox="0 0 24 24" style="transform: scaleX(-1);"><path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" /></svg>
+        </h1>
+
+        <div class="dashboard">
+            <div class="progress-container">
+                <div class="progress-ring" id="progressRing">
+                    <div class="progress-inner">
+                        <span class="level-label">Level</span>
+                        <span class="level-value" id="levelDisplay">1</span>
+                        <span class="xp-sub"><span id="xpDisplay">0</span> / <span id="nextLevelDisplay">100</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="points-bubble">
+                <span class="points-val" id="coinsDisplay">0</span>
+                <span class="points-lbl">Seeds</span>
+            </div>
+        </div>
+
+        <button onclick="toggleVacation()" class="vacation-btn" id="vacationBtn">
+            <i class="fas fa-umbrella-beach"></i> 开启周末休假
+        </button>
+    </header>
+
+    <div class="quote-container reveal delay-200">
+        <div class="quote-main">“慢慢来，比较快”</div>
+        <div class="quote-sub">Take your time, it's faster.</div>
+    </div>
+
+    <!-- 任务区域 -->
+    <h2 class="section-title reveal delay-300">日常滋养 (<span class="special-text">Daily Care</span>)</h2>
+    <div class="card-grid">
+        <!-- 失败卡片 -->
+        <div class="card fail reveal delay-400" onclick="addTask(5, 1, '搞砸了但没关系')">
+            <div class="card-icon"><i class="fas fa-face-frown-open"></i></div>
+            <div class="card-title">搞砸了</div>
+            <div class="card-reward">接纳自己 +5 XP</div>
+        </div>
+
+        <div class="card blue reveal delay-500" onclick="addTask(2, 2, '写日记')">
+            <div class="card-icon"><i class="fas fa-book"></i></div>
+            <div class="card-title">写日记</div>
+            <div class="card-reward">+2 XP &nbsp;<i class="fas fa-seedling" style="font-size:0.7em"></i> 2</div>
+        </div>
+
+        <div class="card terra reveal delay-700" onclick="addTask(2, 2, '洗1个碗')">
+            <div class="card-icon"><i class="fas fa-hand-sparkles"></i></div>
+            <div class="card-title">洗1个碗</div>
+            <div class="card-reward">+2 XP &nbsp;<i class="fas fa-seedling" style="font-size:0.7em"></i> 3</div>
+        </div>
+
+        <!-- 🔴 重点修正：把“其他”卡片放进了 card-grid 里面，并且换成了 addCustomTask 功能 -->
+        <div class="card terra reveal delay-700" onclick="addCustomTask()">
+            <div class="card-icon"><i class="fas fa-pen"></i></div>
+            <div class="card-title">其他</div>
+            <div class="card-reward">点击输入备注</div>
+        </div>
+    </div> <!-- card-grid 在这里结束 -->
+
+
+    <h2 class="section-title reveal delay-800">突破自我 (<span class="special-text">Breakthrough</span>)</h2>
+    <div class="card-grid">
+        <div class="card rose reveal delay-900" onclick="addTask(5, 5, '铺床')">
+            <div class="card-icon"><i class="fas fa-bed"></i></div>
+            <div class="card-title">铺床</div>
+            <div class="card-reward">家务 +5 <i class="fas fa-seedling" style="font-size:0.7em"></i></div>
+        </div>
+
+        <div class="card rose reveal delay-900" onclick="addTask(5, 5, '读后感1篇')">
+            <div class="card-icon"><i class="fas fa-book-open"></i></div>
+            <div class="card-title">读后感</div>
+            <div class="card-reward">行动 +5 <i class="fas fa-seedling" style="font-size:0.7em"></i></div>
+        </div>
+    </div>
+
+    <h2 class="section-title reveal delay-900">奖励自己 (<span class="special-text">Rewards</span>)</h2>
+    <div class="card-grid">
+        <div class="card reveal delay-900" onclick="spendCoins(80, '糖果礼盒')">
+            <div class="card-icon" style="background:#FFF0F5; color:#DB7093"><i class="fas fa-candy-cane"></i></div>
+            <div class="card-title">糖果礼盒</div>
+            <div class="card-reward">-80 Seeds</div>
+        </div>
+
+        <div class="card reveal delay-900" onclick="spendCoins(10, '奶茶')">
+            <div class="card-icon" style="background:#F0F8FF; color:#4682B4"><i class="fas fa-glass-water"></i></div>
+            <div class="card-title">奶茶</div>
+            <div class="card-reward">-10 Seeds</div>
+        </div>
+
+        <div class="card reveal delay-900" onclick="spendCoins(10, '炫个汉堡')">
+            <div class="card-icon" style="background:#FFFACD; color:#DAA520"><i class="fas fa-burger"></i></div>
+            <div class="card-title">炫个汉堡</div>
+            <div class="card-reward">-10 Seeds</div>
+        </div>
+        
+        <div class="card reveal delay-900" onclick="spendCoins(3, '一起玩耍')">
+            <div class="card-icon" style="background:#F5DEB3; color:#8B4513"><i class="fas fa-gamepad"></i></div>
+            <div class="card-title">一起玩耍</div>
+            <div class="card-reward">-3 Seeds</div>
+        </div>
+
+        <div class="card reveal delay-900" onclick="spendCoins(1, '2min游戏')">
+            <div class="card-icon" style="background:#FFE4E1; color:#CD5C5C"><i class="fas fa-stopwatch"></i></div>
+            <div class="card-title">2min游戏</div>
+            <div class="card-reward">-1 Seeds</div>
+        </div>
+    </div>
+
+    <div class="log-container reveal delay-900" id="logContainer">记录将显示在这里...</div>
+    <div style="text-align:center; margin-top:30px;" class="reveal delay-900">
+        <span onclick="resetData()" style="color:#ccc; font-size:0.8rem; cursor:pointer;">重置所有数据</span>
+    </div>
+</div>
+
+<script>
+    const coinSound = new Audio('file:///D:/media%20voice/reward.mp3');
+    const rewardSound = new Audio('file:///D:/media%20voice/%E8%B7%8C%E5%80%92-%E6%AE%B4%E6%89%93-%E5%A4%B1%E8%B4%A5%E7%9A%84_%E7%88%B1%E7%BB%99%E7%BD%91_aigei_com.mp3');
+    
+    coinSound.volume = 0.5;
+    rewardSound.volume = 0.5;
+
+    let data = {
+        level: 1,
+        xp: 0,
+        coins: 0,
+        maxXp: 100,
+        isVacation: false,
+        logs: []
+    };
+
+    function loadData() {
+        const saved = localStorage.getItem('creatorGameData');
+        if (saved) data = JSON.parse(saved);
+        updateUI();
+    }
+
+    function saveData() {
+        localStorage.setItem('creatorGameData', JSON.stringify(data));
+        updateUI();
+    }
+
+    function addTask(xpGain, coinGain, name) {
+        if (data.isVacation) return;
+        try { coinSound.currentTime = 0; coinSound.play().catch(()=>{}); } catch(e){}
+
+        data.xp += xpGain;
+        data.coins += coinGain;
+        
+        if (data.xp >= data.maxXp) {
+            data.level++;
+            data.xp = data.xp - data.maxXp;
+            data.maxXp = Math.floor(data.maxXp * 1.2); 
+            alert(`🎉 Level Up! You are now Lv.${data.level}`);
+        }
+        addLog(`Grew: ${name}`);
+        showFloat(event.clientX, event.clientY, `+${coinGain}`, '#A6A88F');
+        saveData();
+    }
+
+    // 🟢 新增：自定义任务功能
+    function addCustomTask() {
+        if (data.isVacation) return;
+        
+        // 弹出输入框
+        const note = prompt("做了什么呢？(例如: 倒垃圾)");
+        
+        // 如果用户点了取消，或者什么都没填，就不加分
+        if (note && note.trim() !== "") {
+            // 调用加分逻辑 (假设给 1经验，1金币)
+            addTask(2, 2, `其他: ${note}`);
+        }
+    }
+
+    function spendCoins(cost, name) {
+        if (data.isVacation) return;
+        if (data.coins >= cost) {
+            try { rewardSound.currentTime = 0; rewardSound.play().catch(()=>{}); } catch(e){}
+            data.coins -= cost;
+            addLog(`Redeemed: ${name}`);
+            showFloat(event.clientX, event.clientY, `-${cost}`, '#D9B5A8');
+            saveData();
+        } else {
+            alert("Not enough seeds!");
+        }
+    }
+
+    function toggleVacation() {
+        data.isVacation = !data.isVacation;
+        if (!data.isVacation) {
+            data.coins += 5;
+            alert("Welcome back! +5 Seeds");
+        }
+        saveData();
+    }
+
+    function updateUI() {
+        document.getElementById('levelDisplay').innerText = data.level;
+        document.getElementById('coinsDisplay').innerText = Math.floor(data.coins);
+        document.getElementById('xpDisplay').innerText = Math.floor(data.xp);
+        document.getElementById('nextLevelDisplay').innerText = Math.floor(data.maxXp);
+
+        const percent = (data.xp / data.maxXp) * 100;
+        const ring = document.getElementById('progressRing');
+        ring.style.background = `conic-gradient(#A6A88F ${percent}%, #B5AEA4 ${percent}%)`;
+
+        const btn = document.getElementById('vacationBtn');
+        if (data.isVacation) {
+            document.body.classList.add('vacation-mode');
+            btn.innerHTML = '<i class="fas fa-battery-full"></i> 结束休假';
+        } else {
+            document.body.classList.remove('vacation-mode');
+            btn.innerHTML = '<i class="fas fa-umbrella-beach"></i> 开启周末休假';
+        }
+        
+        const logHtml = data.logs.slice().reverse().slice(0, 3).map(l => `<div>${l}</div>`).join('');
+        document.getElementById('logContainer').innerHTML = logHtml;
+    }
+
+    function showFloat(x, y, text, color) {
+        const el = document.createElement('div');
+        el.className = 'floater';
+        el.innerText = text;
+        el.style.left = (x - 20) + 'px';
+        el.style.top = (y - 40) + 'px';
+        el.style.color = color;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1200);
+    }
+
+    function addLog(msg) {
+        const time = new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
+        data.logs.push(`${time} ${msg}`);
+        if(data.logs.length > 10) data.logs.shift();
+    }
+
+    function resetData() {
+        if(confirm("Reset all data?")) {
+            localStorage.removeItem('creatorGameData');
+            location.reload();
+        }
+    }
+
+    loadData();
+</script>
+</body>
+</html>
